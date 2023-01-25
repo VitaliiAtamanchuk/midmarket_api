@@ -5,12 +5,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 import httpx
 
+from app.core.deps import get_db 
 from app.currency.contants import CURRENCIES
 from app.currency.deps import get_from_currency_code, get_to_currency_code
 from app.currency.scrapper import fetch_currency
 from app.currency.models import ConversionHistory
-from app.core.deps import get_db 
 from app.currency.schemas import ConversionHistoryOut, ConversionHistoryMetadata
+from app.currency.exceptions import ParseException
 
 
 router = APIRouter()
@@ -26,7 +27,10 @@ async def convert(
 ) -> ConversionHistoryOut:
     try:
         data = await fetch_currency(amount, from_currency, to_currency)
-    except httpx.RequestError: # TODO: logging
+    except httpx.RequestError:
+        # TODO: logging
+        raise HTTPException(status_code=400, detail='Failed 3rd api request')
+    except ParseException:
         raise HTTPException(status_code=400, detail='Failed 3rd api request')
 
     db_obj = ConversionHistory(

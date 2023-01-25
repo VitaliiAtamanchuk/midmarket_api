@@ -4,6 +4,7 @@ import bs4
 import httpx
 
 from app.currency.contants import HEADERS, HEADERS
+from app.currency.exceptions import ParseException
 
 
 async def fetch_currency(amount: float, from_currency_code: str, to_currency_code: str):
@@ -15,12 +16,16 @@ async def fetch_currency(amount: float, from_currency_code: str, to_currency_cod
         created_at = datetime.utcnow()
 
         soup = bs4.BeautifulSoup(response.text, "lxml")
-        amount = float(soup.select_one('.result__BigRate-sc-1bsijpp-1').get_text().split(" ")[0].replace(',', ''))
 
-        paragraphs = soup.select('.unit-rates___StyledDiv-sc-1dk593y-0 p')
-        rate = amount \
-            if len(paragraphs) == 1 \
-            else float(soup.select_one('.unit-rates___StyledDiv-sc-1dk593y-0 p').get_text().split(" ")[3].replace(',', ''))
+        try:
+            amount = float(soup.select_one('.result__BigRate-sc-1bsijpp-1').get_text().split(" ")[0].replace(',', ''))
+
+            paragraphs = soup.select('.unit-rates___StyledDiv-sc-1dk593y-0 p')
+            rate = amount \
+                if len(paragraphs) == 1 \
+                else float(soup.select_one('.unit-rates___StyledDiv-sc-1dk593y-0 p').get_text().split(" ")[3].replace(',', ''))
+        except Exception:
+            raise ParseException()
     
     return {
         "rate": rate,

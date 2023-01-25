@@ -3,6 +3,8 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+import httpx
+
 from app.currency.contants import CURRENCIES
 from app.currency.deps import get_from_currency_code, get_to_currency_code
 from app.currency.scrapper import fetch_currency
@@ -22,7 +24,10 @@ async def convert(
     from_currency: str = Depends(get_from_currency_code),
     to_currency: str = Depends(get_to_currency_code)
 ) -> ConversionHistoryOut:
-    data = await fetch_currency(amount, from_currency, to_currency)
+    try:
+        data = await fetch_currency(amount, from_currency, to_currency)
+    except httpx.RequestError: # TODO: logging
+        raise HTTPException(status_code=400, detail='Failed 3rd api request')
 
     db_obj = ConversionHistory(
         amount=data['amount'],

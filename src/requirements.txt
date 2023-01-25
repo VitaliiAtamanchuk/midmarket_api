@@ -1,0 +1,11 @@
+fastapi
+pydantic
+sqlalchemy[postgresql_asyncpg]
+asyncpg
+alembic
+iso4217
+httpx
+beautifulsoup4
+lxml
+
+uvicorn

@@ -3,7 +3,7 @@ from datetime import datetime
 import bs4 
 import httpx
 
-from app.currency.contants import HEADERS, HEADERS
+from app.currency.contants import HEADERS, COOKIES
 from app.currency.exceptions import ParseException
 
 
@@ -12,7 +12,7 @@ async def fetch_currency(amount: float, from_currency_code: str, to_currency_cod
     
     async with httpx.AsyncClient() as client:
         
-        response = await client.get(url, headers=HEADERS, cookies=HEADERS)
+        response = await client.get(url, headers=HEADERS, cookies=COOKIES)
         created_at = datetime.utcnow()
 
         soup = bs4.BeautifulSoup(response.text, "lxml")

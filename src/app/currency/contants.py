@@ -2,6 +2,7 @@ from iso4217 import Currency
 
 
 CURRENCIES = dict((c.currency_name, c.code) for c in Currency)
+CURRENCIES_CODE = list(CURRENCIES.values())
 
 HEADERS = {
     'authority': 'www.xe.com',

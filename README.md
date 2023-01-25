@@ -1,12 +1,7 @@
 # Run
-docker-compose up --build -d
-docker-compose exec backend alembic upgrade head
-Default API KEY - `API_KEY`
-
-# Example /convert 
-amount - 1000
-from_currency - US Dollar
-to_currency - Yen
+- docker-compose up --build -d
+- docker-compose exec backend alembic upgrade head
+- Default API KEY - `API_KEY`
 
 # Scrapping 
 Selected the most convenient method - xe.com with html parsing.

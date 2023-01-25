@@ -1,16 +1,15 @@
 from fastapi import HTTPException, Depends, Query
 
-from app.currency.contants import CURRENCIES
+from app.currency.contants import CURRENCIES_CODE
 
 
 class DepsFactory:
 
     @classmethod
     def create_get_currency_code(cls, alias: str):
-        def func(currency_name: str = Query(..., alias=alias)):
-            code = CURRENCIES.get(currency_name, None)
-            if not code:
-                raise HTTPException(status_code=400, detail='Invalid currency name')
+        def func(code: str = Query(..., alias=alias)):
+            if code not in CURRENCIES_CODE:
+                raise HTTPException(status_code=400, detail='Invalid currency code')
             return code
         return func
 

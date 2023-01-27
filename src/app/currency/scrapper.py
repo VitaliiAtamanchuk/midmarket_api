@@ -14,6 +14,7 @@ from app.core.scrapper import get_response
 CURRENCIES = None
 async def fetch_currencies():
     # TODO: dist redis cache
+    # TODO: when and how to invalidated the cache?
     global CURRENCIES
     if CURRENCIES: return CURRENCIES
 

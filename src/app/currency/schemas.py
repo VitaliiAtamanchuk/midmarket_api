@@ -13,4 +13,3 @@ class ConversionHistoryOut(BaseModel):
     converted_amount: float
     rate: float
     metadata: ConversionHistoryMetadata
-

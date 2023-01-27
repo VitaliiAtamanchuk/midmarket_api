@@ -9,7 +9,7 @@ from app.currency.exceptions import ParseException
 
 async def fetch_currency(amount: float, from_currency_code: str, to_currency_code: str):
     url = f'https://www.xe.com/currencyconverter/convert/?Amount={amount}&From={from_currency_code}&To={to_currency_code}'
-    
+
     async with httpx.AsyncClient() as client:
         
         response = await client.get(url, headers=HEADERS, cookies=COOKIES)
@@ -24,8 +24,8 @@ async def fetch_currency(amount: float, from_currency_code: str, to_currency_cod
             rate = amount \
                 if len(paragraphs) == 1 \
                 else float(soup.select_one('.unit-rates___StyledDiv-sc-1dk593y-0 p').get_text().split(" ")[3].replace(',', ''))
-        except Exception:
-            raise ParseException()
+        except Exception as exc:
+            raise ParseException() from exc
     
     return {
         "rate": rate,

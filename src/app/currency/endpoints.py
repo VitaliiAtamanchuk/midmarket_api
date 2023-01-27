@@ -1,6 +1,7 @@
 from typing import Any
+import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 import httpx
@@ -27,11 +28,12 @@ async def convert(
 ) -> ConversionHistoryOut:
     try:
         data = await fetch_currency(amount, from_currency, to_currency)
-    except httpx.RequestError:
-        # TODO: logging
-        raise HTTPException(status_code=400, detail='Failed 3rd api request')
-    except ParseException:
-        raise HTTPException(status_code=400, detail='Failed 3rd api request')
+    except (httpx.RequestError, ParseException) as exc:
+        logging.critical("An exception happened", exc_info=exc)
+        raise HTTPException(
+            status_code=status.HTTP_424_FAILED_DEPENDENCY,
+            detail='Failed 3rd api request'
+        )
 
     db_obj = ConversionHistory(
         amount=data['amount'],

@@ -7,9 +7,8 @@ from sqlalchemy.orm import Session
 import httpx
 
 from app.core.deps import get_db 
-from app.currency.contants import CURRENCIES
 from app.currency.deps import get_from_currency_code, get_to_currency_code
-from app.currency.scrapper import convert_currency
+from app.currency.scrapper import convert_currency, fetch_currencies
 from app.currency.models import ConversionHistory
 from app.currency.schemas import ConversionHistoryOut, ConversionHistoryMetadata
 from app.currency.exceptions import ParseException
@@ -51,8 +50,8 @@ async def convert(
 
 
 @router.get("/currencies")
-async def currencies():
-    return CURRENCIES
+async def currencies() -> dict[str, str]:
+    return await fetch_currencies()
 
 
 @router.get("/history", response_model=list[ConversionHistoryOut])

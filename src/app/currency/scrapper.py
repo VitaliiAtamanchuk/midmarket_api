@@ -1,6 +1,8 @@
 from datetime import datetime
 import logging
 import json
+import contextvars
+from collections import namedtuple
 
 import bs4 
 import httpx
@@ -8,39 +10,55 @@ from fastapi import HTTPException, status
 
 from app.currency.contants import HEADERS, COOKIES
 from app.currency.exceptions import ParseException
-from app.core.scrapper import get_response
+from app.core.scrapper import ScrapperClient
+from app.currency.types import CurrencyCodeT
+from app.currency.schemas import CurrenciesOut
 
+
+ConvertCurrencyResponse = namedtuple('ConvertCurrencyResponse', 'rate amount created_at')
 
 CURRENCIES = None
-async def fetch_currencies():
-    # TODO: dist redis cache
-    # TODO: when and how to invalidated the cache?
+async def fetch_currencies() -> CurrenciesOut:
+    # TODO:
     global CURRENCIES
     if CURRENCIES: return CURRENCIES
 
-    url = f'https://www.xe.com/currencyconverter/'
-    response = await get_response(url, headers=HEADERS, cookies=COOKIES)
-    soup = bs4.BeautifulSoup(response.text, "lxml")
+    async with ScrapperClient() as client:
+        _, soup = await client.request_and_soup(
+            'GET',
+            'https://www.xe.com/currencyconverter/',
+            headers=HEADERS,
+            cookies=COOKIES
+        )
 
     try:
         data = json.loads(soup.select_one('#__NEXT_DATA__').text)
         currencies = data['props']['pageProps']['commonI18nResources']['currencies']['en']
         CURRENCIES = dict((v['name'], k) for k,v in currencies.items())
-        return CURRENCIES
-
     except Exception as exc:
         logging.critical("An exception happened", exc_info=exc)
         raise HTTPException(
             status_code=status.HTTP_424_FAILED_DEPENDENCY,
             detail='Internal api request failure'
         )
+    else:
+        return CURRENCIES
 
 
-async def convert_currency(amount: float, from_currency_code: str, to_currency_code: str):
-    url = f'https://www.xe.com/currencyconverter/convert/?Amount={amount}&From={from_currency_code}&To={to_currency_code}'
-    response = await get_response(url, headers=HEADERS, cookies=COOKIES)
-    created_at = datetime.utcnow() - response.elapsed
-    soup = bs4.BeautifulSoup(response.text, "lxml")
+async def convert_currency(
+    amount: float,
+    from_currency_code: CurrencyCodeT,
+    to_currency_code: CurrencyCodeT
+) -> ConvertCurrencyResponse:
+    async with ScrapperClient() as client:
+        created_at = datetime.utcnow()
+        response, soup = await client.request_and_soup(
+            'GET',
+            f'https://www.xe.com/currencyconverter/convert/?Amount={amount}&From={from_currency_code}&To={to_currency_code}',
+            headers=HEADERS,
+            cookies=COOKIES
+        )
+        created_at += response.elapsed
 
     try:
         amount = float(soup.select_one('.result__BigRate-sc-1bsijpp-1').get_text().split(" ")[0].replace(',', ''))
@@ -55,9 +73,5 @@ async def convert_currency(amount: float, from_currency_code: str, to_currency_c
             status_code=status.HTTP_424_FAILED_DEPENDENCY,
             detail='Internal api request failure'
         )
-    
-    return {
-        "rate": rate,
-        "amount": amount,
-        "created_at": created_at
-    }
+    else:
+        return ConvertCurrencyResponse(created_at=created_at, amount=amount, rate=rate)

@@ -1,13 +1,13 @@
 from fastapi import HTTPException, Depends, Query
 
 from app.currency.scrapper import fetch_currencies
+from app.currency.types import CurrencyCodeT
 
 
 class DepsFactory:
-
     @classmethod
     def create_get_currency_code(cls, alias: str):
-        async def func(code: str = Query(..., alias=alias)):
+        async def func(code: CurrencyCodeT = Query(..., alias=alias)):
             currencies = await fetch_currencies()
             currencies_code = list(currencies.values())
             if code not in currencies_code:

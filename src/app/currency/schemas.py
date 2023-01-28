@@ -1,6 +1,16 @@
 from datetime import datetime
 
 from pydantic import BaseModel
+from app.currency.types import CurrencyCodeT, CurrencyNameT
+
+
+class CurrenciesOut(BaseModel):
+    __root__: dict[CurrencyCodeT, CurrencyNameT]
+
+    class Config:
+        schema_extra = {
+            "currency": "currency name",
+        }
 
 
 class ConversionHistoryMetadata(BaseModel):

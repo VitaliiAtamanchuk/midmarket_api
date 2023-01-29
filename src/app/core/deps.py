@@ -1,3 +1,4 @@
+import os
 from typing import Generator
 import secrets
 
@@ -7,7 +8,7 @@ from fastapi.security import APIKeyHeader
 from app.core.db import SessionLocal
 
 
-API_KEY = 'API_KEY'
+API_KEY = os.getenv("API_KEY")
 api_key_header = APIKeyHeader(name="X-API-KEY")
 
 

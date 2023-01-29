@@ -9,4 +9,4 @@ Selected the most convenient method - xe.com with html parsing.
 Wise.com use cloudflare with bot management.
 
 # Architecture
-Ideally architecture would be Event-driven, but taking into account short deadline the basic chosen.
+Ideally architecture would be Event-driven.

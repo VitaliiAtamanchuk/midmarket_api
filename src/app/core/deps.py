@@ -2,7 +2,7 @@ import os
 from typing import Generator
 import secrets
 
-from fastapi import Security
+from fastapi import Security, HTTPException, status
 from fastapi.security import APIKeyHeader
 
 from app.core.db import SessionLocal
@@ -17,7 +17,7 @@ def get_api_key(api_key_header: str = Security(api_key_header)):
         return api_key_header
     else:
         raise HTTPException(
-            status_code=HTTP_403_FORBIDDEN, detail="Could not validate API KEY"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Could not validate API KEY"
         )
 
 

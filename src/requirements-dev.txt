@@ -1,0 +1,6 @@
+coverage
+pre-commit
+pytest
+sqlalchemy[mypy]
+types-beautifulsoup4
+types-redis

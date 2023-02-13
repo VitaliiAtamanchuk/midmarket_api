@@ -1,4 +1,3 @@
-
 def test_convert(client):
     """
     GIVEN
@@ -6,7 +5,7 @@ def test_convert(client):
     THEN response with status 200
     """
     response = client.get(
-        "/convert",
-        params={'amount': 100, 'from_currency': 'USD', 'to_currency': 'EUR'}
+        '/convert',
+        params={'amount': 100, 'from_currency': 'USD', 'to_currency': 'EUR'},
     )
     assert response.status_code == 200

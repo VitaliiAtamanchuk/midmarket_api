@@ -4,7 +4,7 @@
 - Default API KEY - `API_KEY`
 - Swagger UI - localhost/docs
 
-# Scrapping 
+# Scrapping
 Selected the most convenient method - xe.com with html parsing.
 Wise.com use cloudflare with bot management.
 

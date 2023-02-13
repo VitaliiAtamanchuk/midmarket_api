@@ -1,10 +1,10 @@
-import os
 import json
+import os
 
-from redis import asyncio as aioredis
+from redis import asyncio as aioredis # type: ignore
 
 
-redis = aioredis.from_url(os.getenv("REDIS_URL"), decode_responses=True)
+redis = aioredis.from_url(os.getenv('REDIS_URL'), decode_responses=True)
 DEFAULT_KEY_PREFIX = 'key'
 TWO_MINUTES = 60 * 60
 
@@ -32,22 +32,11 @@ class Keys:
 
     @prefixed_key
     def cache_key(self) -> str:
-        return f'cache'
+        return 'cache'
 
 
 def make_keys():
     return Keys()
-
-
-class Keys:
-    """Methods to generate key names for Redis data structures."""
-
-    def __init__(self, prefix: str = DEFAULT_KEY_PREFIX):
-        self.prefix = prefix
-
-    @prefixed_key
-    def cache_key(self) -> str:
-        return f'cache'
 
 
 async def get_cache(keys: Keys):

@@ -1,7 +1,9 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from app.currency.types import CurrencyCodeT, CurrencyNameT
+
+from app.currency.types import CurrencyCodeT
+from app.currency.types import CurrencyNameT
 
 
 class CurrenciesOut(BaseModel):
@@ -9,12 +11,12 @@ class CurrenciesOut(BaseModel):
 
     class Config:
         schema_extra = {
-            "currency": "currency name",
+            'currency': 'currency name',
         }
 
 
 class ConversionHistoryMetadata(BaseModel):
-    time_of_conversion: datetime 
+    time_of_conversion: datetime
     from_currency: str
     to_currency: str
 

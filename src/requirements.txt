@@ -1,12 +1,12 @@
-fastapi
-pydantic
-sqlalchemy[postgresql_asyncpg]
-asyncpg
 alembic
-iso4217
-httpx
+asyncpg
 beautifulsoup4
+fastapi
+httpx
+iso4217
 lxml
+pydantic
 redis
+sqlalchemy[postgresql_asyncpg]
 
 uvicorn

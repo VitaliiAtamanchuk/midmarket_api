@@ -1,2 +1,2 @@
-from .db import Base
-from app.currency.models import ConversionHistory
+from .db import Base # noqa: F401
+from app.currency.models import ConversionHistory # noqa: F401

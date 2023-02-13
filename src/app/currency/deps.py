@@ -1,4 +1,5 @@
-from fastapi import HTTPException, Depends, Query
+from fastapi import HTTPException
+from fastapi import Query
 
 from app.currency.scrapper import fetch_currencies
 from app.currency.types import CurrencyCodeT

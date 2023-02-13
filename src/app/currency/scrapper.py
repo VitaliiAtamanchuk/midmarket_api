@@ -64,7 +64,10 @@ async def convert_currency(
             .split(' ')[0]
             .replace(',', '')
         )
+        # '//*[@id="__next"]//p[contains(@class, "result__BigRate-sc-")]/text()'
+        # parse_float()
 
+        # TODO: make it clear
         paragraphs = soup.select('.unit-rates___StyledDiv-sc-1dk593y-0 p')
         rate_str = amount_str \
             if len(paragraphs) == 1 \

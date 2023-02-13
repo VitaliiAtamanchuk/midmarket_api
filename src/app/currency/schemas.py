@@ -6,6 +6,7 @@ from app.currency.types import CurrencyCodeT
 from app.currency.types import CurrencyNameT
 
 
+# TODO:
 class CurrenciesOut(BaseModel):
     __root__: dict[CurrencyCodeT, CurrencyNameT]
 
